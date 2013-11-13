@@ -35,8 +35,22 @@ get '/tweet/:user_id' do
 end
 
 post '/tweet' do
-  @user = User.find(params[:user_id])
+  content_type :json
 
-  twitter_client = Twitter::Client.new(:oauth_token => @user.oauth_token, :oauth_token_secret => @user.oauth_secret)
-  twitter_client.update(params[:tweet])
+  status = params[:tweet]
+  @user = User.find(params[:user_id])
+  sidekiq_job_id = @user.tweet(params[:tweet])
+  {sidekiq_job_id: sidekiq_job_id, status: status}.to_json
+end
+
+# get '/sidekiq' do
+
+# end
+
+get '/status/:job_id' do
+  if job_is_complete(params[:job_id])
+    return "true"
+  else
+    return "false"
+  end
 end
