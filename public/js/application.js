@@ -8,14 +8,11 @@ $(document).ready(function() {
       var status = response.status;
       var interval = setInterval(function(){
         $.get('/status/' + job_id, function(response){
-          console.log(response)
-
           if (response === "true") {
             clearInterval(interval);
           }
         });
-      },10);      
-      // $('.recent_tweets').prepend("<p>"+status+"</p>")
+      },100);
     });
   });
 
